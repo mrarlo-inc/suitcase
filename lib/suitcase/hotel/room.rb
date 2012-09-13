@@ -71,8 +71,6 @@ module Suitcase
         params["city"] = info[:city]
         params.merge!(parameterize_rooms(@rooms))
         @rooms.each_with_index do |room, index|
-          binding.pry
-          STDOUT.puts room.inspect
           index += 1
           params["room#{index}FirstName"] = room[:first_name] || params["firstName"] # defaults to the billing
           params["room#{index}LastName"] = room[:last_name] || params["lastName"] # person's name
