@@ -42,7 +42,7 @@ module Suitcase
                   :hotel_in_destination, :proximity_distance,
                   :property_description, :number_of_floors, :number_of_rooms,
                   :deep_link, :tripadvisor_rating, :tripadvisor_rating_url, :tripadvisor_review_count, :general_policies,
-                  :checkin_instructions, :general_policies, :raw
+                  :checkin_instructions, :general_policies, :lowest_average_nightly_rate, :raw
 
     # Internal: Initialize a new Hotel.
     #
@@ -247,6 +247,11 @@ module Suitcase
       parsed_info[:short_description] = summary["shortDescription"]
       parsed_info[:amenity_mask] = summary["amenityMask"]
       parsed_info[:masked_amenities] = Amenity.parse_mask(parsed_info[:amenity_mask])
+      begin
+        parsed_info[:lowest_average_nightly_rate] = summary["RoomRateDetailsList"]["RoomRateDetails"]["RateInfos"]["RateInfo"]["ChargeableRateInfo"]["@averageRate"]
+      rescue
+        parsed_info[:lowest_average_nightly_rate] = "unknown"
+      end
 
       parsed_info
     end
