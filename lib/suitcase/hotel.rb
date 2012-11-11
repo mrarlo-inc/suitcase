@@ -280,7 +280,7 @@ module Suitcase
     # Returns an Array of Hashes representing Hotels.
     def self.split(parsed)
       hotels = parsed["HotelListResponse"]["HotelList"]
-      hotels["HotelSummary"]
+      hotels["HotelSummary"] || [] # If there are no hotels in the response, this would return nil without the [] shortcircuit
     end
 
     # Public: Get the thumbnail URL of the image.
