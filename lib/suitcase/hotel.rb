@@ -21,7 +21,7 @@ module Suitcase
 
     # Public: The Amenities that can be passed in to searches, and are returned
     #         from many queries.
-    AMENITIES = { 
+    AMENITIES = {
       pool: 1,
       fitness_center: 2,
       restaurant: 3,
@@ -162,8 +162,8 @@ module Suitcase
         params.delete(:rooms)
       end
 
-      amenities = params[:amenities] ? params[:amenities].map {|amenity| 
-        AMENITIES[amenity] 
+      amenities = params[:amenities] ? params[:amenities].map {|amenity|
+        AMENITIES[amenity]
       }.join(",") : nil
       params[:amenities] = amenities if amenities
 
@@ -184,7 +184,7 @@ module Suitcase
       hotels = [split(parsed)].flatten.map do |hotel_data|
         h = Hotel.new(parse_information(hotel_data))
       end;hotels.first.raw = parsed
-      
+
       update_session(parsed, info[:session])
 
       info[:results] ? hotels[0..(info[:results]-1)] : hotels
@@ -197,7 +197,7 @@ module Suitcase
     # Returns a reformatted Hash with the specified accessors.
     def self.parse_information(parsed)
       handle_errors(parsed)
-      
+
       if parsed["hotelId"]
         summary = parsed
         parsed_info = {}
@@ -265,7 +265,7 @@ module Suitcase
       images = parsed["HotelInformationResponse"]["HotelImages"]["HotelImage"].map do |image_data|
         Suitcase::Image.new(image_data)
       end if parsed["HotelInformationResponse"] && parsed["HotelInformationResponse"]["HotelImages"] && parsed["HotelInformationResponse"]["HotelImages"]["HotelImage"]
-      
+
       unless parsed["thumbNailUrl"].nil? or parsed["thumbNailUrl"].empty?
         images = [Suitcase::Image.new("thumbnailURL" => "http://images.travelnow.com" + parsed["thumbNailUrl"])]
       end
@@ -330,9 +330,15 @@ module Suitcase
         room_data[:guarantee_only] = raw_data["guaranteeRequired"]
         room_data[:cancellation_policy] = raw_data["cancellationPolicy"]
         room_data[:rate_code] = raw_data["rateCode"]
-        room_data[:room_type_code] = raw_data["roomTypeCode"]
-        room_data[:room_type_description] = raw_data["roomTypeDescription"]
         room_data[:rate_description] = raw_data["rateDescription"]
+
+        if raw_data["RoomType"]
+          room_data[:room_type_code] = raw_data["RoomType"]["@roomCode"]
+          room_data[:room_type_description] = raw_data["RoomType"]["description"]
+        else
+          room_data[:room_type_code] = raw_data["roomTypeCode"]
+          room_data[:room_type_description] = raw_data["roomTypeDescription"]
+        end
 
         rate_info = raw_data["RateInfos"]["RateInfo"]
 
