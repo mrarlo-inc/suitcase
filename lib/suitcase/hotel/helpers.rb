@@ -116,7 +116,7 @@ module Suitcase
           raise e
         end
 
-        JSON.parse(Net::HTTP.get_response(uri).body)
+        JSON.parse(response.body)
       end
 
       # Internal: Raise the errors returned from the response.
@@ -189,8 +189,8 @@ module Suitcase
       #
       # Returns the generated signature.
       def generate_signature
-        Digest::MD5.hexdigest(Configuration.hotel_api_key + 
-                              Configuration.hotel_shared_secret + 
+        Digest::MD5.hexdigest(Configuration.hotel_api_key +
+                              Configuration.hotel_shared_secret +
                               Time.now.to_i.to_s)
       end
 
